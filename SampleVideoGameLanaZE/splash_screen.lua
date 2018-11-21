@@ -50,18 +50,18 @@ local companyLogo
 --Functions:Move the company logo
 --this function adds the scroll speed to the x-value of the logo
 local function MoveLogo(event)
-    --add the scroll speed to the x-value of the ship
+    --add the scroll speed to the x-value of the logo
     companyLogo.x = companyLogo.x - scrollSpeed
-    --change the transparency of the ship every that it goes faster and fades out
+    --change the transparency of the logo every that it goes faster and fades out
     companyLogo.alpha = companyLogo.alpha - 0.0000000000000008
 end
 
 --Functions:Move the text object
 --this function adds the scroll speed to the x-value of the text object
 local function MoveText(event)
-    --add the scroll speed to the x-value of the ship
+    --add the scroll speed to the x-value of the text
     textObject.x = textObject.x + scrollSpeed2
-    --change the transparency of the ship every that it goes faster and fades out
+    --change the transparency of the text every that it goes faster and fades out
     textObject.alpha = textObject.alpha + 0.03
 end
 
@@ -124,7 +124,7 @@ function scene:show( event )
 
     elseif ( phase == "did" ) then
 
-        -- Call the moveBeetleship function as soon as we enter the frame.
+        -- Call the MoveLogo and MoveText functions as soon as we enter the frame.
         Runtime:addEventListener("enterFrame", MoveLogo)
         Runtime:addEventListener("enterFrame", MoveText)
 
