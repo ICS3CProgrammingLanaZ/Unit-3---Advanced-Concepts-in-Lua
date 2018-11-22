@@ -71,7 +71,7 @@ local congratulationText
 
 -- Displays text that says correct.
 local correct 
-local  incorrect 
+local incorrect 
 
 -- Displays the level text of time text
 local level1Text 
@@ -84,6 +84,21 @@ local alreadyClickedAnswer = false
 -- SOUND
 -----------------------------------------------------------------------------------------
 
+-- sounds variables
+local correctSound = audio.loadSound("Sounds/CorrectAnswer.mp3")
+local correctSoundChannel
+
+local incorrectSound = audio.loadSound("Sounds/WrongBuzzer.mp3")
+local incorrectSoundChannel
+
+local youloseSound = audio.loadSound("Sounds/Kids Booing.mp3")
+local youloseSoundChannel
+
+local youwinSound = audio.loadSound("Sounds/Cheering.mp3")
+local youwinSoundChannel
+
+local bkgSound = audio.loadSound("Sounds/level1Music.wav")
+local bkgSoundChannel
 
 -----------------------------------------------------------------------------------------
 -- LOCAL FUNCTIONS
@@ -94,7 +109,7 @@ local function DetermineAnswers()
     answer = firstNumber + secondNumber
     wrongAnswer1 = answer + math.random(1,4)
     wrongAnswer2 = answer + math.random(5,8)
-    wrongAnswer3 = answer + math.random(11,15)
+    wrongAnswer3 = answer - math.random(1,4)
 end
 
 -- Function that changes the answers for a new question and places them randomly in one of the positions
@@ -137,6 +152,24 @@ local function DisplayAnswers( )
 
 end
 
+local function CheckPoints()
+        -- monitor points till they reach 2
+    if (numberCorrect == 2) then
+
+        -- display the you win screen
+        composer.gotoScene("you_win")
+
+        --play you win sound
+        youwinSoundChannel = audio.play(youwinSound)
+
+        --stop bkg music
+        audio.stop(bkgSoundChannel)
+
+        
+    end
+end
+
+
 -- Function that transitions to Lose Screen
 local function LoseScreenTransition( )        
     composer.gotoScene( "you_lose", {effect = "zoomInOutFade", time = 1000})
@@ -176,6 +209,9 @@ local function RestartScene()
     -- if they have 0 lives, go to the You Lose screen
     if (lives == 0) then
         composer.gotoScene("you_lose")
+        correctSoundChannel = audio.play(youloseSound)
+        --stop bkg music
+        audio.stop(bkgSoundChannel)
     else 
 
         DisplayAddEquation()
@@ -184,10 +220,7 @@ local function RestartScene()
     end
 end
 --------------------------------------------------------------
-    if (lives == 2) then
-        composer.gotoScene("you_win")
-    end    
-
+  
 -- Functions that checks if the buttons have been clicked.
 local function TouchListenerAnswer(touch)
     -- get the user answer from the text object that was clicked on
@@ -204,6 +237,8 @@ local function TouchListenerAnswer(touch)
             numberCorrect = numberCorrect + 1
             -- call RestartScene after 1 second
             timer.performWithDelay( 1000, RestartScene )
+            CheckPoints()
+            correctSoundChannel = audio.play(correctSound)
         else 
             incorrect.isVisible = true
         end        
@@ -225,7 +260,8 @@ local function TouchListenerWrongAnswer1(touch)
             lives = lives - 1
             -- call RestartScene after 1 second
             timer.performWithDelay( 1000, RestartScene )  
-            incorrect.isVisible = true          
+            incorrect.isVisible = true 
+            incorrectSoundChannel = audio.play(incorrectSound)         
         end        
 
     end
@@ -246,7 +282,8 @@ local function TouchListenerWrongAnswer2(touch)
                 lives = lives - 1
                 -- call RestartScene after 1 second
                 timer.performWithDelay( 1000, RestartScene )  
-                incorrect.isVisible = true          
+                incorrect.isVisible = true   
+                incorrectSoundChannel = audio.play(incorrectSound)        
             end        
     
         end
@@ -267,7 +304,8 @@ local function TouchListenerWrongAnswer3(touch)
                 lives = lives - 1
                 -- call RestartScene after 1 second
                 timer.performWithDelay( 1000, RestartScene )
-                incorrect.isVisible = true            
+                incorrect.isVisible = true  
+                incorrectSoundChannel = audio.play(incorrectSound)           
             end        
     
         end
@@ -382,6 +420,8 @@ function scene:show( event )
     -- Creating a group that associates objects with the scene
     --local sceneGroup = self.view
     local phase = event.phase
+    
+
 
 
     -----------------------------------------------------------------------------------------
@@ -394,8 +434,9 @@ function scene:show( event )
     elseif ( phase == "did" ) then
 
         -- initialize the number of lives and number correct 
-        lives = 3
+        lives = 2
         numberCorrect = 0
+        bkgSoundChannel = audio.play(bkgSound)
 
         -- listeners to each of the answer text objects
         AddTextObjectListeners()        
@@ -430,6 +471,7 @@ function scene:hide( event )
     -----------------------------------------------------------------------------------------
 
     elseif ( phase == "did" ) then
+        audio.stop(bkgSoundChannel)
     end
 
 end
