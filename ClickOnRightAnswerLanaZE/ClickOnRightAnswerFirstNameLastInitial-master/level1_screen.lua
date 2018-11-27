@@ -471,7 +471,7 @@ function scene:hide( event )
     -----------------------------------------------------------------------------------------
 
     elseif ( phase == "did" ) then
-        audio.stop(bkgSoundChannel)
+        
     end
 
 end
