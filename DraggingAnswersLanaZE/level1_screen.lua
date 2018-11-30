@@ -1,4 +1,4 @@
------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
 --
 -- game_level1.lua
 -- Created by: Daniel
@@ -35,7 +35,7 @@ local soccerball
 local questionText 
 
 --the alternate numbers randomly generated
-local correctAnswer = 0
+local correctAnswer
 local alternateAnswer1
 local alternateAnswer2    
 local alternateAnswer3
@@ -48,7 +48,6 @@ local answerboxAlreadyTouched = false
 local alternateAnswerBox1AlreadyTouched = false
 local alternateAnswerBox2AlreadyTouched = false
 local alternateAnswerBox3AlreadyTouched = false
-
 
 --create textboxes holding answer and alternate answers 
 local answerbox
@@ -84,12 +83,10 @@ local function DisplayQuestion()
     local randomNumber2
     local randomNumber3
 
-
     --set random numbers
     randomNumber1 = math.random(2, 15)
     randomNumber2 = math.random(2, 15)
     randomNumber3 = math.random(2, 15)
-
 
     --calculate answer
     correctAnswer = randomNumber1 + randomNumber2
@@ -115,11 +112,11 @@ local function DetermineAlternateAnswers()
     alternateAnswer1 = correctAnswer + math.random(3, 5)
     alternateAnswerBox1.text = alternateAnswer1
 
-    -- generate incorrect 2 answer and set it in the textbox
-    alternateAnswer2 = correctAnswer - math.random(1, 2)
+    -- generate incorrect answer and set it in the textbox
+    alternateAnswer2 = correctAnswer + math.random(1, 2)
     alternateAnswerBox2.text = alternateAnswer2
-    
-    -- generate incorrect 3 answer and set it in the textbox
+
+    -- generate incorrect answer and set it in the textbox
     alternateAnswer3 = correctAnswer - math.random(6, 10)
     alternateAnswerBox3.text = alternateAnswer3
 
@@ -131,7 +128,6 @@ local function DetermineAlternateAnswers()
     alternateAnswerBox1.x = display.contentWidth * 0.9
     alternateAnswerBox2.x = display.contentWidth * 0.9
     alternateAnswerBox3.x = display.contentWidth * 0.9
-
 
 end
 
@@ -148,6 +144,9 @@ local function PositionAnswers()
         -- set the new y-positions of each of the answers
         answerbox.y = display.contentHeight * 0.4
 
+        --alternateAnswerBox3
+        alternateAnswerBox3.y = display.contentHeight * 0.85
+
         --alternateAnswerBox2
         alternateAnswerBox2.y = display.contentHeight * 0.70
 
@@ -158,19 +157,22 @@ local function PositionAnswers()
         --remembering their positions to return the answer in case it's wrong
         alternateAnswerBox1PreviousY = alternateAnswerBox1.y
         alternateAnswerBox2PreviousY = alternateAnswerBox2.y
-        alternateAnswerBox3PreviousY = alternateAnswerBox3.y
+        alternateAnswerBox3PreviousY = alternateAnswerBox3.y        
         answerboxPreviousY = answerbox.y 
 
     -- random position 2
     elseif (randomPosition == 2) then
 
         answerbox.y = display.contentHeight * 0.55
-        
+
+        --alternateAnswerBox3
+        alternateAnswerBox3.y = display.contentHeight * 0.1
+
         --alternateAnswerBox2
         alternateAnswerBox2.y = display.contentHeight * 0.4
 
         --alternateAnswerBox1
-        alternateAnswerBox1.y = display.contentHeight * 0.70
+        alternateAnswerBox1.y = display.contentHeight * 0.7
 
         --remembering their positions to return the answer in case it's wrong
         alternateAnswerBox1PreviousY = alternateAnswerBox1.y
@@ -182,6 +184,9 @@ local function PositionAnswers()
      elseif (randomPosition == 3) then
         answerbox.y = display.contentHeight * 0.70
 
+        --alternateAnswerBox3
+        alternateAnswerBox3.y = display.contentHeight * 0.85
+
         --alternateAnswerBox2
         alternateAnswerBox2.y = display.contentHeight * 0.55
 
@@ -192,8 +197,8 @@ local function PositionAnswers()
         alternateAnswerBox1PreviousY = alternateAnswerBox1.y
         alternateAnswerBox2PreviousY = alternateAnswerBox2.y
         alternateAnswerBox3PreviousY = alternateAnswerBox3.y
-        answerboxPreviousY = answerbox.y 
-    
+        answerboxPreviousY = answerbox.y
+
      -- random position 4
      elseif (randomPosition == 4) then
         answerbox.y = display.contentHeight * 0.85
@@ -215,25 +220,16 @@ local function PositionAnswers()
     end
 end
 
-local function CheckPoints()
-        -- monitor points till they reach 2
-    if (correctAnswer == 2) then
-
-        -- display the you win screen
-        composer.gotoScene("you_win")
-        
-    end
-end
-
-
 -- Transitioning Function to YouWin screen
 local function YouWinTransitionLevel1( )
     composer.gotoScene("you_win", {effect = "fade", time = 500})
 end
 
-local function YouLoseTransitionLevel1( )
+-- Transitioning Function to YouWin screen
+local function YouloseTransitionLevel1( )
     composer.gotoScene("you_lose", {effect = "fade", time = 500})
 end
+
 
 -- Function to Restart Level 1
 local function RestartLevel1()
@@ -253,16 +249,6 @@ local function TouchListenerAnswerbox(touch)
     if (alternateAnswerBox1AlreadyTouched == false) and 
         (alternateAnswerBox2AlreadyTouched == false) and
         (alternateAnswerBox3AlreadyTouched == false) then
-
--- if the user gets the answer right, display Correct and call RestartSceneRight
-        if (answer == tonumber(userAnswer)) then     
-            
-            -- increase the number correct by 1
-            correctAnswer = correctAnswer + 1
-            -- call RestartScene after 1 second
-            timer.performWithDelay( 1000, RestartScene )
-            CheckPoints()
-        end 
 
         if (touch.phase == "began") then
 
@@ -309,17 +295,6 @@ local function TouchListenerAnswerBox1(touch)
         (alternateAnswerBox2AlreadyTouched == false) and
         (alternateAnswerBox3AlreadyTouched == false) then
 
-        -- if the user gets the answer right, display Correct and call RestartSceneRight
-        if (answer == tonumber(userAnswer)) then     
-            
-            -- increase the number correct by 1
-            correctAnswer = correctAnswer + 1
-            -- call RestartScene after 1 second
-            timer.performWithDelay( 1000, RestartScene )
-            CheckPoints()
-        end        
-
-
         if (touch.phase == "began") then
             --let other boxes know it has been clicked
             alternateAnswerBox1AlreadyTouched = true
@@ -355,23 +330,11 @@ local function TouchListenerAnswerBox1(touch)
     end
 end 
 
-
 local function TouchListenerAnswerBox2(touch)
     --only work if none of the other boxes have been touched
     if (answerboxAlreadyTouched == false) and 
         (alternateAnswerBox1AlreadyTouched == false) and
         (alternateAnswerBox3AlreadyTouched == false) then
-
-        -- if the user gets the answer right, display Correct and call RestartSceneRight
-        if (answer == tonumber(userAnswer)) then     
-            
-            -- increase the number correct by 1
-            correctAnswer = correctAnswer + 1
-            -- call RestartScene after 1 second
-            timer.performWithDelay( 1000, RestartScene )
-            CheckPoints()
-        
-        end        
 
         if (touch.phase == "began") then
             --let other boxes know it has been clicked
@@ -407,22 +370,12 @@ local function TouchListenerAnswerBox2(touch)
     end
 end 
 
+
 local function TouchListenerAnswerBox3(touch)
     --only work if none of the other boxes have been touched
     if (answerboxAlreadyTouched == false) and 
         (alternateAnswerBox1AlreadyTouched == false) and
         (alternateAnswerBox2AlreadyTouched == false) then
-        
-        -- if the user gets the answer right, display Correct and call RestartSceneRight
-        if (answer == tonumber(userAnswer)) then     
-            
-            -- increase the number correct by 1
-            correctAnswer = correctAnswer + 1
-            -- call RestartScene after 1 second
-            timer.performWithDelay( 1000, RestartScene )
-            CheckPoints()
-           
-        end        
 
         if (touch.phase == "began") then
             --let other boxes know it has been clicked
@@ -521,7 +474,6 @@ function scene:create( event )
     alternateAnswerBox1 = display.newText("", display.contentWidth * 0.9, 0, nil, 100)
     alternateAnswerBox2 = display.newText("", display.contentWidth * 0.9, 0, nil, 100)
     alternateAnswerBox3 = display.newText("", display.contentWidth * 0.9, 0, nil, 100)
-
 
     -- set the x positions of each of the answer boxes
     answerboxPreviousX = display.contentWidth * 0.9
